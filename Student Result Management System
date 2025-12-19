@@ -1,0 +1,239 @@
+#include <iostream>
+#include <fstream>
+#include<string>
+using namespace std;
+class student{
+    private:
+    int roll;
+    string name;
+    int subject;
+    int *marks;
+    string *subname;
+    int pin=9589;
+   
+public:
+
+void addstudent(){
+   int p;
+    cout<<"Enter Pin:";
+    cin>>p;
+   
+    if(pin==p){
+  
+       
+    ofstream file("C:\\Users\\dc\\Desktop\\projects.cpp\\student.txt",ios::app);
+    int num;
+    cout<<"ENTER NUMBER OF STUDENT DETAIL :";
+    cin>>num;
+    for(int i=1;i<=num;i++){
+    cout<<"ENTER ROLL NUMBER  ";
+    cin>>roll;
+    cout<<"ENTER NAME : ";
+    cin.ignore();
+    getline(cin,name);
+    cout<<"Enter subject Of number:-";
+    cin>>subject;
+    
+    marks=new int[subject];
+    subname=new string[subject];
+     cin.ignore();
+    for(int i=0;i<subject;i++){
+    cout<<"Enter Subject Name:- ";
+    getline(cin,subname[i]);
+        cout<<"Enter Marks:-";
+        cin>>marks[i];
+        cin.ignore();
+    }
+    
+    file<<name<<"|"<<roll<<"|"<<subject<<"|";
+    for(int i=0;i<subject;i++){
+        file<<subname[i]<<":"<<marks[i];
+        if(i!=subject-1)file<<",";
+    }
+    delete[] marks;
+    delete[] subname;
+}
+file.close();
+    cout<<"STUDENT ADDED SUCCESSFULLY:"<<endl;
+
+    }
+      else{
+        cout<<"Wrong pin";
+      }
+}
+void studentreport(){
+    int  total=0;
+    bool pass= true;
+    float percent;
+    for(int i=0;i<subject;i++){
+        total+=marks[i];
+        if(marks[i]<33)pass=false;
+    }
+    percent= (float) total/(subject*100)*100;
+    cout<<"Total Number:="<<total<<endl;
+    cout<<"percent:="<<percent<<"%"<<endl;
+  if(percent>=90)
+  cout<<"Grade:"<<"A+"<<endl;
+  else if(percent>=75)
+  cout<<"Grade:="<<"A"<<endl;
+  else if(percent>=60)
+  cout<<"Grade:="<<"B"<<endl;
+  else if(percent>=40)
+  cout<<"Grade:="<<"C"<<endl;
+  else
+  cout<<"Fail."<<endl;
+    
+    cout<<"Result:=";
+    if(pass){
+        cout<<"PASS"<<endl;
+    }
+    else{
+        cout<<"FAIL"<<endl;
+    }
+}
+void viewstudentlist(){
+    int p;
+    cout<<"Enter Pin:";
+    cin>>p;
+    if(pin==p){
+    ifstream file("C:\\Users\\dc\\Desktop\\projects.cpp\\student.txt");
+    while(true){
+        getline(file,name,'|');
+        if(!file)break;
+        file>>roll;file.ignore();
+        file>>subject;file.ignore();
+        marks=new int[subject];
+        subname=new string[subject];
+        for(int i=0;i<subject;i++){
+     getline(file,subname[i],':');
+     file>>marks[i];
+     if(file.peek()==',')file.ignore();
+        }
+        file.ignore();
+        cout<<"Student Name="<<name<<endl;
+        cout<<"Student Roll No.="<<roll<<endl;
+        cout<<"------Student Subject and Marks:--------"<<endl;
+           for(int i=0;i<subject;i++)
+            cout<<" "<<subname[i]<<"="<<marks[i]<<endl;
+         
+              studentreport();
+         delete[] marks;
+          delete[] subname; 
+    
+    
+  }  file.close();
+    }else{
+        cout<<"Wrong...pin"<<endl;
+    }
+}
+void serchstudentbyroll(){
+    int sroll;
+    bool found=false;
+    cout<<"ENTER ROLL NUMBER :";
+    cin>>sroll;
+    ifstream file("C:\\Users\\dc\\Desktop\\projects.cpp\\student.txt");
+while(true)
+{     
+      getline(file,name,'|');
+        if(!file)break;
+        file>>roll;file.ignore();
+        file>>subject;file.ignore();
+        marks=new int[subject];
+        subname=new string[subject];
+        for(int i=0;i<subject;i++){
+     getline(file,subname[i],':');
+     file>>marks[i];
+     if(file.peek()==',')file.ignore();
+        }
+        file.ignore();
+    if(sroll==roll){
+        cout<<"STUDENT NAME ="<<name<<endl;
+        cout<<"STUDENT  ROLL NUMBER="<<roll<<endl;
+       cout<<"------Student Subject and Marks:--------"<<endl;
+           for(int i=0;i<subject;i++)
+            cout<<" "<<subname[i]<<"="<<marks[i]<<endl;
+              studentreport();
+           
+        found=true;
+        delete[]marks;
+        delete[]subname;
+        break;
+    }
+    delete[]marks;
+  delete[]subname;
+    
+}
+file.close();
+if(!found){
+    cout<<"ROLL NUMBER IS NOT FOUND"<<endl;
+}
+}
+void deletestudentrecord(){
+    ifstream file("C:\\Users\\dc\\Desktop\\projects.cpp\\student.txt");
+    ofstream t("C:\\Users\\dc\\Desktop\\projects.cpp\\studentt.txt");
+    int droll;
+    cout<<"Enter Student roll Number:-";
+    cin>>droll;
+    bool found=false;
+    while(true){
+        getline(file,name,'|');
+        if(!file)break;
+        file>>roll;file.ignore();
+        file>>subject;file.ignore();
+        marks=new int[subject];
+        subname=new string[subject];
+        for(int i=0;i<subject;i++){
+     getline(file,subname[i],':');
+     file>>marks[i];
+     if(file.peek()==',')file.ignore();
+        }
+        file.ignore();
+        if(roll==droll){
+        found=true;
+         continue;
+        }
+        t<<name<<"|"<<roll<<"|"<<subject<<"|";
+    for(int i=0;i<subject;i++){
+        t<<subname[i]<<":"<<marks[i];
+        if(i!=subject-1)t<<",";
+    }
+    delete[] marks;
+    delete[] subname;
+
+    }
+    file.close();
+    t.close();
+    remove("C:\\Users\\dc\\Desktop\\projects.cpp\\student.txt");
+    rename("C:\\Users\\dc\\Desktop\\projects.cpp\\studentt.txt","C:\\Users\\dc\\Desktop\\projects.cpp\\student.txt");
+    if(found){
+        cout<<"Student Record Delete Successfully..!"<<endl;
+    }
+    else{
+        cout<<"Roll Number Not Found.."<<endl;
+    }
+}
+
+};
+int main(){
+    student s;
+    int choice;
+    do{
+        cout<<"\n=================welcome===============\n";
+        cout<<"1.ADD STUDENTS: "<<endl;
+        cout<<"2.VIEW  STUDENT DETAIL:"<<endl;
+        cout<<"3.SERCH BY ROLL NUMBER :"<<endl;
+        cout<<"4.Delte Student Record:"<<endl;
+        cout<<"5.EXIT:"<<endl;
+        cout<<"ENTER CHOICE  ";
+        cin>>choice;
+        switch(choice){
+            case 1: s.addstudent();break;
+            case 2: s.viewstudentlist();break;
+            case 3: s.serchstudentbyroll();break;
+            case 4: s.deletestudentrecord();break;
+            case 5: cout<<"EXIT THE PROGRAM:";break;
+            default:
+            cout<<"INVALID CHOICE :"<<endl;
+        }
+    }while(choice!=5);
+}
